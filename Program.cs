@@ -1,3 +1,6 @@
+using GlobalTech.DataAccess.Context;
+using Microsoft.EntityFrameworkCore;
+
 namespace GlobalTechMVCApplication
 {
     public class Program
@@ -8,6 +11,25 @@ namespace GlobalTechMVCApplication
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddMvc();
+
+            IConfiguration configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json")
+    .AddEnvironmentVariables().Build();
+            builder.Services.AddDbContext<GlobalTechDbContext>(
+                optionsAction =>
+                {
+                    optionsAction.UseSqlServer(configuration.GetConnectionString(name:"GlobalTechCompany"));
+                }
+             );
+
+            builder.Services.Configure<CookiePolicyOptions>(options =>
+            {
+                // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
+
 
             var app = builder.Build();
 
